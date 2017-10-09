@@ -1,2 +1,4 @@
 # Siec-perceptronowa
-Siec perceptronowa - wersja 1.0
+Siec perceptronowa - wersja 1.1
+
+Edit #1
