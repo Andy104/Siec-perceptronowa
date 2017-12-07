@@ -52,14 +52,15 @@ double Neuron::sumDOW(const Layer &nextLayer) const
 double Neuron::tansigFunction(double x)
 {
 	double tansig = (2 / (1 + exp(-2 * x))) -1;
-	cout << "tansig(x) = " << tansig << endl;
+	//cout << x << endl;
+	//cout << "tansig(" << x << ") = " << tansig << endl;
 	return tansig;
 }
 
 double Neuron::purelinFunction(double x)
 {
 	double lin = x;
-	cout << "purelin(x) = " << lin << endl;
+	//cout << "purelin(" << x << ") = " << lin << endl;
 	return lin;
 }
 
@@ -73,16 +74,18 @@ void Neuron::feedForward(const Layer &prevLayer, unsigned layerNum)
 	case 1:
 		for (n = 0; n < prevLayer.size(); ++n) {
 			sum += prevLayer[n].getOutputVal() * prevLayer[n].m_outputWeights[m_myIndex].weight;
-			//cout << "sum = " << sum << endl;
+			//cout << layerNum << " sum = " << sum << endl;
 		}
 		m_outputVal = Neuron::tansigFunction(sum);
+		cout << "tansig = " << m_outputVal << endl;
 		break;
 	case 2:
 		for (n = 0; n < prevLayer.size(); ++n) {
 			sum += prevLayer[n].getOutputVal() * prevLayer[n].m_outputWeights[m_myIndex].weight;
-			//cout << "sum = " << sum << endl;
+			//cout << layerNum << " sum = " << sum << endl;
 		}
 		m_outputVal = Neuron::purelinFunction(sum);
+		cout << "purelin = " << m_outputVal << endl;
 	default:
 		break;
 	}
@@ -118,10 +121,10 @@ void Net::getResults(vector<double> &resultVals) const
 	double mapminmax;
 
 	for (unsigned n = 0; n < m_layers.back().size() - 1; ++n) {
-		if (n == 0 || n == 2) {
-			mapminmax = (2 - 0)*(m_layers.back()[n].getOutputVal() + 1) / (1 + 1) + 0;
+		if (n == 0 || n == 1) {
+			mapminmax = (4 - 0)*(m_layers.back()[n].getOutputVal() + 1) / (1 + 1) + 0;
 		}
-		if (n == 1 || n == 3) {
+		if (n == 2 || n == 3) {
 			mapminmax = (1 + 1)*(m_layers.back()[n].getOutputVal() + 1) / (1 + 1) - 1;
 		}
 		cout << "resultVals[" << n << "] = " << mapminmax << endl;
@@ -132,12 +135,14 @@ void Net::getResults(vector<double> &resultVals) const
 void Net::feedForward(const vector<double> &inputVals)
 {
 	assert(inputVals.size() == m_layers[0].size() - 1);
+	double mapminmax;
 
 	for (unsigned i = 0; i < inputVals.size(); ++i) {
-		double mapminmax = (1 + 1)*(inputVals[i] - 1000) / (4000 - 1000) - 1;
+		if (i == 0) { mapminmax = (1 + 1)*(inputVals[i] - 1250) / (2200 - 1250) - 1; }
+		if (i == 1) { mapminmax = (1 + 1)*(inputVals[i] - 1300) / (2200 - 1300) - 1; }
 		m_layers[0][i].setOutputVal(mapminmax);
-		double result = m_layers[0][i].getOutputVal();
-		cout << "result [" << i << "] = " << result << endl;
+		double input = m_layers[0][i].getOutputVal();
+		cout << "input [" << i << "] = " << input << endl << endl;
  	}
 
 	for (unsigned layerNum = 1; layerNum < m_layers.size(); ++layerNum) {
@@ -175,18 +180,18 @@ int main()
 {
 	vector<unsigned> topology = { 2, 8, 4 };
 	double weightTable[100][100] = { 
-	{ -2.2262353443724119, 0.240911501250247, -7.771985610902895, -0.135920811990952, -10.958964644094142, 38.361989501327564, 19.054150135051130, 6.588522811927432 },
-	{ -2.3124582332364492, 11.974140101969004, 41.407328218704606, 12.065838399079153, 5.832571029618378, 1.571468312227123, -31.209524873306574, -6.167941966749249 },
-	{ 6.1316912347136343, 11.81473315018301, 14.800956804396813, 11.589835002168435, 6.4383831481577252, 19.483460284520937, 15.99047038410459, -2.0871817576418819 },
-	{ 0.0332948105995429, 1.03118922991245, -0.0563395212141743, 0.0838689487760870 },
-	{ -4.14283514896582, -0.0680578448082310, -0.046413382601782, -0.068053620706070 },
-	{ 0.004308689913784, 0.007347666907454, 0.506020624454071, 0.007348054653341 },
-	{ 4.313373924496300, 0.063182512909129, 0.042335875246172, 0.063177555653699 },
-	{ -0.965116013113119, -0.0005670790341832, -0.001106585549589, -0.000565684212302 },
-	{ -0.004755527827990, -1.024101049166465, -0.512340546554027, -1.024149381049142 },
-	{ 0.000065709634845, -0.000980268322908, -0.502208161178029, -0.000978254757323 },
-	{ 1.003663346325185, 1.040947251050357, 0.523370722488140, 1.040995335965606 },
-	{ 0.755945612986882, -0.017336471473698, 0.068061150656458, 0.929980775367793 }
+	{ -0.454512109914736, -2.382215605562247, 6.090167014179015, 5.700755711897299, 5.090570236291049, -4.084955404002233, -5.620588191449418, 2.611526654433665 },
+	{ 8.375535749878196, 2.893159533461307, 0.673550129764684, 0.261290023014269, 0.796853049382166, 1.147367347637792, -0.614049002479692, 0.842932256950842 },
+	{ -0.226100670019585, 0.805667539607018, -0.755128347652538, -0.635627631814640, 0.099757930995300, -0.730011070949842, -3.813486106911570, 2.364019101002252 },
+	{ -0.063325925605889, -0.288363883771032, 0.693937887913942, 0.693945059409193 },
+	{ 0.064057470869886, -0.535123160973171, -0.775805799351880, -0.775794914515106 },
+	{ 0.944440069296792, -1.111596189063857, -1.471815876085993, -1.471958362195871 },
+	{ -0.886123527366445, 1.558834198945437, 0.077242734810675, 0.077425107884098 },
+	{ -0.568610777468602, -0.614072926632399, 2.474171082220285, 2.474135658954908 },
+	{ 0.108590302466931, -0.056767826815087, 1.090749141279165, 1.090749131829550 },
+	{ 0.665088047256768, -0.347975015422364, 0.721931721120446, 0.721891122466033 },
+	{ 0.468727766483958, -0.750530576566738, 1.590241108777221, 1.590174954281911 },
+	{ -0.181042775186012, 0.213336278405742, 0.046052586013943, 0.046073885287945 }
 	};
 	Net myNet(topology, weightTable);
 
